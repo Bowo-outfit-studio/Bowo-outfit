@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Outfit Changer — Prototype</title>
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#171923;--muted:#707586;--accent:#6757e8;--line:#e7e8ef}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,Arial,sans-serif;color:var(--ink)}
+.app{max-width:440px;min-height:100vh;margin:auto;background:var(--bg);padding:18px 16px 30px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}.brand{font-weight:850;letter-spacing:.3px}.brand span{color:var(--accent)}.pill{font-size:11px;color:#4c3fbc;background:#ebe8ff;padding:7px 10px;border-radius:20px}
+h1{font-size:25px;line-height:1.15;margin:8px 0}.sub{color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;margin:12px 0;box-shadow:0 5px 18px #24264a08}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.label{font-weight:750;font-size:14px}.hint{font-size:11px;color:var(--muted);margin-top:4px}
+.upload{margin-top:12px;border:1.5px dashed #c9c8dc;border-radius:14px;min-height:116px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:7px;color:var(--muted);font-size:12px;overflow:hidden;position:relative;background:#fafaff}
+.upload b{color:var(--accent);font-size:24px}.upload img{max-width:100%;max-height:190px;object-fit:contain}.upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+button{border:0;border-radius:13px;padding:14px 16px;font-weight:750;font-size:14px;cursor:pointer}
+.primary{width:100%;background:var(--accent);color:white;margin-top:12px;box-shadow:0 7px 15px #6757e833}.secondary{background:#f0efff;color:#5546ce}.ghost{background:#f2f3f7;color:#35394a}
+nav{display:flex;gap:8px;margin:14px 0 20px}nav button{flex:1;padding:10px 5px;background:#e9eaf0;color:#626779;font-size:11px}nav button.active{background:#e8e4ff;color:#4c3fbc}
+.screen{display:none}.screen.active{display:block}.section-title{font-size:16px;font-weight:800;margin:18px 0 8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.tile{padding:14px 10px;background:white;border:1px solid var(--line);border-radius:14px;text-align:left;font-size:12px;font-weight:700}.tile small{display:block;color:var(--muted);font-weight:400;margin-top:5px}.tile.selected{border:2px solid var(--accent);background:#f7f5ff}
+.switchrow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}.switchrow:last-child{border:0}.tag{font-size:10px;color:#16845c;background:#e5f7ef;border-radius:20px;padding:5px 8px}
+.progress{height:8px;background:#ececf2;border-radius:10px;overflow:hidden;margin:15px 0}.progress i{display:block;width:0;height:100%;background:var(--accent);transition:width .4s}
+.resultbox{min-height:220px;display:flex;align-items:center;justify-content:center;background:#f7f7fb;border-radius:14px;color:var(--muted);font-size:12px;overflow:hidden}.resultbox img{max-width:100%;max-height:360px;object-fit:contain}
+.note{font-size:11px;color:var(--muted);line-height:1.5;margin-top:12px}.back{background:transparent;color:var(--muted);padding:4px 0;margin-bottom:8px}
+</style></head>
+<body><main class="app">
+<header class="top"><div class="brand">AI <span>OUTFIT</span> CHANGER</div><div class="pill">ONLINE AI</div></header>
+<nav>
+<button class="active" data-tab="home">Beranda</button><button data-tab="character">Karakter</button><button data-tab="clothes">Pakaian</button><button data-tab="background">Latar</button><button data-tab="result">Hasil</button>
+</nav>
+<section id="home" class="screen active">
+<h1>Ubah tampilan,<br>cukup beberapa sentuhan.</h1><p class="sub">Virtual try-on berbasis AI. Unggah foto model dan produk pakaian, lalu pilih latar yang kamu inginkan.</p>
+<div class="card"><div class="row"><div><div class="label">1. Foto karakter</div><div class="hint">Foto orang yang akan memakai pakaian</div></div><span class="tag">Wajib</span></div><div class="upload" id="homeChar"><b>＋</b>Upload foto karakter<input type="file" accept="image/*" onchange="preview(this,'charPreview','homeChar')"></div><img id="charPreview" hidden style="width:100%;max-height:130px;object-fit:contain;margin-top:8px"></div>
+<div class="card"><div class="row"><div><div class="label">2. Foto produk pakaian</div><div class="hint">Gunakan foto produk yang jelas</div></div><span class="tag">Wajib</span></div><div class="upload" id="homeClothes"><b>＋</b>Upload foto pakaian<input type="file" accept="image/*" onchange="preview(this,'clothPreview','homeClothes')"></div><img id="clothPreview" hidden style="width:100%;max-height:130px;object-fit:contain;margin-top:8px"></div>
+<div class="card"><div class="row"><div><div class="label">3. Background</div><div class="hint">Opsional: pilih preset atau unggah foto sendiri</div></div><span class="tag">Opsional</span></div><button class="secondary" style="width:100%;margin-top:12px" onclick="go('background')">Pilih background</button></div>
+<button class="primary" onclick="generate()">GANTI BAJU & BACKGROUND</button>
+<p class="note">Prototipe tampilan: proses AI asli memerlukan koneksi ke server dan API Virtual Try-On.</p>
+</section>
+<section id="character" class="screen"><button class="back" onclick="go('home')">← Kembali</button><h1>Foto karakter</h1><p class="sub">Pilih foto model dengan wajah dan pakaian awal terlihat jelas.</p><div class="card"><div class="upload"><b>＋</b>Pilih dari galeri<input type="file" accept="image/*" onchange="preview(this,'charPreview','homeChar')"></div><img id="charLarge" hidden style="width:100%;margin-top:10px"></div><button class="primary" onclick="go('clothes')">LANJUT KE PRODUK</button></section>
+<section id="clothes" class="screen"><button class="back" onclick="go('home')">← Kembali</button><h1>Foto produk pakaian</h1><p class="sub">Unggah foto pakaian. AI akan berusaha mempertahankan warna, potongan, motif, dan detail produk.</p><div class="card"><div class="upload"><b>＋</b>Pilih foto pakaian<input type="file" accept="image/*" onchange="preview(this,'clothPreview','homeClothes')"></div><img id="clothLarge" hidden style="width:100%;margin-top:10px"></div><button class="primary" onclick="go('background')">LANJUT KE BACKGROUND</button></section>
+<section id="background" class="screen"><button class="back" onclick="go('home')">← Kembali</button><h1>Pilih background</h1><p class="sub">Pilih suasana baru atau gunakan background asli foto karakter.</p><div class="grid" id="presets"><button class="tile selected" onclick="pick(this,'Pertahankan asli')">🖼️ Asli<small>Tidak mengubah latar</small></button><button class="tile" onclick="pick(this,'Studio profesional')">📸 Studio<small>Foto katalog produk</small></button><button class="tile" onclick="pick(this,'Kamar modern')">🛏️ Kamar modern</button><button class="tile" onclick="pick(this,'Ruang tamu')">🛋️ Ruang tamu</button><button class="tile" onclick="pick(this,'Pantai tropis')">🏝️ Pantai</button><button class="tile" onclick="pick(this,'Taman hijau')">🌳 Taman</button><button class="tile" onclick="pick(this,'Mall modern')">🏬 Mall</button><button class="tile" onclick="pick(this,'Jalan perkotaan')">🌆 Kota</button></div>
+<div class="card"><div class="label">Atau unggah background sendiri</div><div class="upload"><b>＋</b>Foto background<input type="file" accept="image/*" onchange="preview(this,'bgPreview','bgUpload')"></div><img id="bgPreview" hidden style="width:100%;margin-top:8px"><div id="bgUpload" hidden></div></div>
+<button class="primary" onclick="go('result')">SIMPAN PILIHAN BACKGROUND</button></section>
+<section id="result" class="screen"><button class="back" onclick="go('home')">← Beranda</button><h1>Hasil kreasi</h1><p class="sub">Periksa hasil sebelum menyimpannya.</p><div class="card"><div class="resultbox" id="resultBox">Hasil AI akan tampil di sini</div><div class="progress"><i id="bar"></i></div><div id="status" class="hint">Siap diproses setelah server AI terhubung.</div></div><div class="switchrow"><span>Kunci identitas wajah</span><b>AKTIF</b></div><div class="switchrow"><span>Pertahankan proporsi tubuh & pose</span><b>AKTIF</b></div><div class="switchrow"><span>Pertahankan detail pakaian</span><b>AKTIF</b></div><button class="primary" onclick="generate()">MULAI GENERATE</button><button class="secondary" style="width:100%;margin-top:8px" onclick="save()">SIMPAN HASIL</button><p class="note">Tombol generate dan simpan pada prototipe ini adalah simulasi antarmuka, belum mengirim gambar ke server AI.</p></section>
+</main>
+<script>
+let bgChoice='Pertahankan asli',charURL='',clothURL='',bgURL='';
+function go(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function preview(input,id,container){if(!input.files||!input.files[0])return;let url=URL.createObjectURL(input.files[0]);if(id==='charPreview'){charURL=url;document.getElementById('charLarge').src=url;document.getElementById('charLarge').hidden=false;}if(id==='clothPreview'){clothURL=url;document.getElementById('clothLarge').src=url;document.getElementById('clothLarge').hidden=false;}if(id==='bgPreview'){bgURL=url;}let img=document.getElementById(id);img.src=url;img.hidden=false;let c=document.getElementById(container);if(c)c.style.display='none';}
+function pick(el,name){document.querySelectorAll('#presets .tile').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');bgChoice=name;}
+function generate(){go('result');let s=document.getElementById('status'),b=document.getElementById('bar');if(!charURL||!clothURL){s.textContent='Silakan unggah foto karakter dan foto pakaian terlebih dahulu.';return;}s.textContent='Simulasi: data siap dikirim ketika server AI diintegrasikan. Background: '+bgChoice+'.';b.style.width='22%';setTimeout(()=>{b.style.width='55%';},350);setTimeout(()=>{b.style.width='80%';},750);}
+function save(){alert('Fitur simpan akan aktif setelah hasil AI dan server terhubung.');}
+</script></body></html>
